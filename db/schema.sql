@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS awesome_laboratory_DB;
-CREATE DATABASE awesome_laboratory_DB;
+DROP DATABASE IF EXISTS awesome_laboratory_db;
+CREATE DATABASE awesome_laboratory_db;
 
-USE awesome_laboratory_DB;
+USE awesome_laboratory_db;
 
 CREATE TABLE department (
     id INT NOT NULL AUTO_INCREMENT,
