@@ -1,8 +1,11 @@
+-- Delete the database if it exists, else create it
 DROP DATABASE IF EXISTS awesome_laboratory_db;
 CREATE DATABASE awesome_laboratory_db;
 
+-- Use the database
 USE awesome_laboratory_db;
 
+-- Department Table
 CREATE TABLE department (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(30) NOT NULL,
@@ -10,6 +13,7 @@ CREATE TABLE department (
     UNIQUE KEY (name)
 );
 
+-- Role Table
 CREATE TABLE role (
     id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(30) NOT NULL,
@@ -19,6 +23,7 @@ CREATE TABLE role (
     FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE CASCADE
 );
 
+-- Employee Table
 CREATE TABLE employee (
     id INT NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(30) NOT NULL,
