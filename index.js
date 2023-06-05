@@ -33,10 +33,10 @@ async function main() {
                 addRole(db);
                 break;
             case 'Add an Employee':
-                addEmployee();
+                addEmployee(db);
                 break;
             case 'Update an Employee Role':
-                updateRole();
+                updateRole(db);
                 break;
             case 'Exit':
                 return process.exit();
@@ -67,23 +67,55 @@ async function viewEmployees(db) {
 }
 
 async function addDepartment(db) {
-    const data = await inquirer.prompt(department);
-    [rows, fields] = await db.query(`INSERT INTO department (name) VALUES ('${data.departmentName}')`);
-    await viewDepartments(db);
+    try {
+        const data = await inquirer.prompt(department);
+
+        [rows, fields] = await db.query(`INSERT INTO department (name) VALUES ('${data.departmentName}')`);
+
+        await viewDepartments(db);
+    } catch (error) {
+        console.log(`୧(ಥ ⌓ ̅ಥ)୨ ${error.message}`);
+        addDepartment(db);
+    }
 }
 
 async function addRole(db) {
-    const [departments] = await db.query('SELECT * FROM department');
+    try {
+        const [departments] = await db.query('SELECT * FROM department');
 
-    role.find(question => question.name === 'roleDepartment').choices = departments.map(department => department.name);
+        role.find(question => question.name === 'roleDepartment').choices = departments.map(department => department.name);
 
-    const data = await inquirer.prompt(role);
+        const data = await inquirer.prompt(role);
 
-    let roleDepartmentId = departments.find(department => department.name === data.roleDepartment).id
+        let roleDepartmentId = departments.find(department => department.name === data.roleDepartment).id
 
-    await db.query(`INSERT INTO role (title, salary, department_id) VALUES ('${data.roleName}', ${data.salary}, ${roleDepartmentId})`);
-    
-    await viewRoles(db);
+        await db.query(`INSERT INTO role (title, salary, department_id) VALUES ('${data.roleName}', ${data.salary}, ${roleDepartmentId})`);
+
+        await viewRoles(db);
+    } catch (error) {
+        console.log(`୧(ಥ ⌓ ̅ಥ)୨ ${error.message}`);
+        addRole(db);
+    }
+}
+
+async function addEmployee(db) {
+    console.log(db)
+    try {
+
+    } catch (error) {
+        console.log(`୧(ಥ ⌓ ̅ಥ)୨ ${error.message}`);
+        addEmployee(db);
+    }
+}
+
+async function updateRole(db) {
+    console.log(db)
+    try {
+
+    } catch (error) {
+        console.log(`୧(ಥ ⌓ ̅ಥ)୨ ${error.message}`);
+        updateRole(db);
+    }
 }
 
 main();
