@@ -15,7 +15,7 @@ const department = [
     }
 ]
 
-const role = [
+const role = (departmentChoices) => [
     {
         type: 'input',
         message: 'Enter job title:',
@@ -33,8 +33,49 @@ const role = [
     {
         type: 'list',
         message: 'Select the department it belongs to:',
-        choices: [],
+        choices: departmentChoices,
         name: 'roleDepartment'
     }
 ]
-module.exports = { menu, department, role };
+
+const employee = (roleChoices, managerChoices) => [
+    {
+        type: 'input',
+        message: 'Enter first name:',
+        name: 'firstName'
+    },
+    {
+        type: 'input',
+        message: 'Enter last name:',
+        name: 'lastName',
+    },
+    {
+        type: 'list',
+        message: 'Select the role of the employee:',
+        choices: roleChoices,
+        name: 'role_id'
+    },
+    {
+        type: 'list',
+        message: 'Select the manager of the employee, if any:',
+        choices: managerChoices,
+        name: 'manager_id'
+    }
+]
+
+const roleUpdate = (employeeChoices, roleChoices) => [
+    {
+        type: 'list',
+        message: 'Select the employee:',
+        choices: employeeChoices,
+        name: 'employeeID'
+    },
+    {
+        type: 'list',
+        message: 'Select the new role:',
+        choices: roleChoices,
+        name: 'updatedRole'
+    }
+]
+
+module.exports = { menu, department, role, employee, roleUpdate};

@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2/promise');
 const table = require('console.table');
-const { menu, department, role } = require('./questions.js');
+const { menu, department, role, employee, roleUpdate } = require('./questions.js');
 
 async function main() {
     try {
@@ -49,72 +49,71 @@ async function main() {
 };
 
 async function viewDepartments(db) {
-    [rows, fields] = await db.query('SELECT id AS ID, name AS DEPARTMENT FROM department');
-    console.table(rows);
+    [departments] = await db.query('SELECT id AS ID, name AS DEPARTMENT FROM department');
+    console.table(departments);
     await main();
 }
 
 async function viewRoles(db) {
-    [rows, fields] = await db.query('SELECT r.id AS ID, r.title AS ROLE, r.salary AS SALARY, d.name AS DEPARTMENT FROM role AS r LEFT JOIN department AS d ON r.department_id = d.id');
-    console.table(rows);
+    [roles] = await db.query('SELECT r.id AS ID, title AS ROLE, salary AS SALARY, name AS DEPARTMENT FROM role AS r JOIN department AS d ON r.department_id = d.id');
+    console.table(roles);
     await main();
 }
 
 async function viewEmployees(db) {
-    [rows, fields] = await db.query('SELECT e.id AS ID, e.first_name AS FIRSTNAME, e.last_name AS LASTNAME, r.title AS POSITION, d.name AS DEPARTMENT, CONCAT(m.first_name, " ", m.last_name) AS MANAGER FROM employee AS e LEFT JOIN role AS r ON e.role_id = r.id INNER JOIN department AS d ON r.department_id = d.id LEFT JOIN employee AS m ON e.manager_id = m.id');
-    console.table(rows);
+    [employees] = await db.query('SELECT e.id AS ID, e.first_name AS "FIRST NAME", e.last_name AS "LAST NAME", title AS POSITION, name AS DEPARTMENT, CONCAT(m.first_name, " ", m.last_name) AS MANAGER FROM employee AS e JOIN role AS r ON e.role_id = r.id JOIN department AS d ON r.department_id = d.id LEFT JOIN employee AS m ON e.manager_id = m.id');
+    console.table(employees);
     await main();
 }
 
 async function addDepartment(db) {
     try {
         const data = await inquirer.prompt(department);
-
-        [rows, fields] = await db.query(`INSERT INTO department (name) VALUES ('${data.departmentName}')`);
-
+        await db.query(`INSERT INTO department (name) VALUES ('${data.departmentName}')`);
         await viewDepartments(db);
     } catch (error) {
         console.log(`୧(ಥ ⌓ ̅ಥ)୨ ${error.message}`);
-        addDepartment(db);
+        await addDepartment(db);
     }
 }
 
 async function addRole(db) {
     try {
-        const [departments] = await db.query('SELECT * FROM department');
-
-        role.find(question => question.name === 'roleDepartment').choices = departments.map(department => department.name);
-
-        const data = await inquirer.prompt(role);
-
-        let roleDepartmentId = departments.find(department => department.name === data.roleDepartment).id
-
-        await db.query(`INSERT INTO role (title, salary, department_id) VALUES ('${data.roleName}', ${data.salary}, ${roleDepartmentId})`);
-
+        const [departments] = await db.query('SELECT id AS value, name FROM department');
+        const data = await inquirer.prompt(role(departments));
+        await db.query(`INSERT INTO role (title, salary, department_id) VALUES ('${data.roleName}', ${data.salary}, ${data.roleDepartment})`);
         await viewRoles(db);
     } catch (error) {
         console.log(`୧(ಥ ⌓ ̅ಥ)୨ ${error.message}`);
-        addRole(db);
+        await addRole(db);
     }
 }
 
 async function addEmployee(db) {
-    console.log(db)
     try {
-
+        const [roles] = await db.query('SELECT id AS value, title AS name FROM role');
+        const [managers] = await db.query('SELECT CONCAT(first_name, " ", last_name) AS name, id AS value from employee');
+        let managerOptions = [{ value: null, name: "No Manager Specified" }, ...managers];
+        const data = await inquirer.prompt(employee(roles, managerOptions));
+        await db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${data.firstName}', '${data.lastName}', ${data.role_id}, ${data.manager_id})`);
+        await viewEmployees(db);
     } catch (error) {
         console.log(`୧(ಥ ⌓ ̅ಥ)୨ ${error.message}`);
-        addEmployee(db);
+        await addEmployee(db);
     }
 }
 
 async function updateRole(db) {
-    console.log(db)
     try {
-
+        const [employees] = await db.query('SELECT CONCAT(first_name, " ", last_name) AS name, id AS value from employee');
+        const [roles] = await db.query('SELECT id AS value, title AS name FROM role');
+        const data = await inquirer.prompt(roleUpdate(employees, roles));
+        await db.query(`UPDATE employee SET role_id = ${data.updatedRole} WHERE id = ${data.employeeID}`)
+        console.log('⸂⸂⸜(രᴗര๑)⸝⸃⸃ updated')
+        await viewEmployees();
     } catch (error) {
         console.log(`୧(ಥ ⌓ ̅ಥ)୨ ${error.message}`);
-        updateRole(db);
+        await updateRole(db);
     }
 }
 
