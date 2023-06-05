@@ -1,3 +1,4 @@
+// Main Menu Prompt
 const menu = [
     {
         type: 'list',
@@ -7,6 +8,7 @@ const menu = [
     }
 ]
 
+// Add Department Prompt
 const department = [
     {
         type: 'input',
@@ -15,6 +17,7 @@ const department = [
     }
 ]
 
+// Add Role Prompts
 const role = (departmentChoices) => [
     {
         type: 'input',
@@ -38,6 +41,7 @@ const role = (departmentChoices) => [
     }
 ]
 
+// Add Employee Prompts
 const employee = (roleChoices, managerChoices) => [
     {
         type: 'input',
@@ -63,6 +67,7 @@ const employee = (roleChoices, managerChoices) => [
     }
 ]
 
+// Updatee Role Prompts
 const roleUpdate = (employeeChoices, roleChoices) => [
     {
         type: 'list',
@@ -78,4 +83,5 @@ const roleUpdate = (employeeChoices, roleChoices) => [
     }
 ]
 
+// Export the constants for use in the index.js
 module.exports = { menu, department, role, employee, roleUpdate};
