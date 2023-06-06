@@ -130,7 +130,7 @@ async function updateRole(db) {
         // Take the user input and update the role_id as the new selected role id form the inquirer
         await db.query(`UPDATE employee SET role_id = ${data.updatedRole} WHERE id = ${data.employeeID}`);
         console.log('⸂⸂⸜(രᴗര๑)⸝⸃⸃ updating...');
-        await viewEmployees();
+        await viewEmployees(db);
     } catch (error) {
         console.log(`୧(ಥ ⌓ ̅ಥ)୨ ${error.message}`);
         await updateRole(db);
