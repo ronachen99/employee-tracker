@@ -1,7 +1,7 @@
 // Import Required Dependencies
 const inquirer = require('inquirer');
 const mysql = require('mysql2/promise');
-const table = require('console.table');
+require('console.table');
 const { menu, department, role, employee, roleUpdate } = require('./questions.js');
 
 // Main Menu Function: that displays the main menu with options for the user to choose from in the terminal
